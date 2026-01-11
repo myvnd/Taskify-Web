@@ -44,6 +44,17 @@ def delete_task(index):
 # Load task list
 task_list = functions.get_task_list()
 
+
+# ==== INPUT BOX ====
+
+st.text_input(
+    label='What needs to be done?',
+    placeholder='Enter a new task here',
+    key='new_task',
+    on_change=add_task
+)
+
+
 st.write("### My Tasks")
 
 for index, task in enumerate(task_list):
@@ -96,14 +107,6 @@ if "edit_index" in st.session_state:
             st.session_state.pop("edit_text", None)
             st.rerun()
 
-# ==== INPUT BOX ====
-
-st.text_input(
-    label='What needs to be done?',
-    placeholder='Enter a new task here',
-    key='new_task',
-    on_change=add_task
-)
 
 # Reset trigger after processing update logic
 st.session_state.new_task_triggered = False
