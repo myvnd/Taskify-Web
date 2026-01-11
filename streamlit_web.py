@@ -38,6 +38,16 @@ def delete_task(index):
     if 0 <= index < len(task_list):
         task_list.pop(index)
         functions.write_task_list(task_list)
+
+    # If current edit target was deleted
+    if st.session_state.get("edit_index") == index:
+        st.session_state.pop("edit_index", None)
+        st.session_state.pop("edit_text", None)
+
+    # If the deletion shifts indexes AFTER the edit index
+    elif st.session_state.get("edit_index", -1) > index:
+        st.session_state["edit_index"] -= 1
+
     st.rerun()
 
 
