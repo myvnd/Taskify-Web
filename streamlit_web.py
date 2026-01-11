@@ -48,7 +48,11 @@ st.write("### My Tasks")
 
 for index, task in enumerate(task_list):
     cols = st.columns([0.1, 0.5, 0.12, 0.12])
-    checked = cols[0].checkbox('', key=f"check_{index}")
+    checked = cols[0].checkbox(
+        label='Task done',
+        key=f"check_{index}",
+        label_visibility="hidden"
+        )
 
     cols[1].write(task) # Show task name
 
