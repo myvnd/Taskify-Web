@@ -6,9 +6,9 @@ import streamlit as st
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from core import functions
 
+st.set_page_config(layout="wide")
 
 st.title('Taskify')
-
 
 def add_task():
     """ Add a new task """
