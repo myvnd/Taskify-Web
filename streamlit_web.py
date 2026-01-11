@@ -29,7 +29,7 @@ def edit_task(index, new_text):
     if 0 <= index < len(task_list):
         task_list[index] = new_text.strip()
         functions.write_task_list(task_list)
-    st.experimental_rerun()
+    st.rerun()
 
 
 def delete_task(index):
@@ -38,7 +38,7 @@ def delete_task(index):
     if 0 <= index < len(task_list):
         task_list.pop(index)
         functions.write_task_list(task_list)
-    st.experimental_rerun()
+    st.rerun()
 
 
 # Load task list
@@ -94,7 +94,7 @@ if "edit_index" in st.session_state:
         if st.button("Cancel"):
             st.session_state.pop("edit_index", None)
             st.session_state.pop("edit_text", None)
-            st.experimental_rerun()
+            st.rerun()
 
 # ==== INPUT BOX ====
 
