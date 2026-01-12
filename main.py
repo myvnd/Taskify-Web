@@ -58,17 +58,18 @@ task_list = functions.get_task_list()
 # ==== INPUT BOX ====
 
 st.text_input(
-    label='What needs to be done?',
-    placeholder='Enter a new task here',
+    label='Enter a new task here:',
+    placeholder='Enter text',
     key='new_task',
-    on_change=add_task
+    on_change=add_task,
+    label_visibility='visible'
 )
 
 
 st.write("### My Tasks")
 
 for index, task in enumerate(task_list):
-    cols = st.columns([0.1, 0.5, 0.12, 0.12])
+    cols = st.columns([1, 8, 1, 1])
     checked = cols[0].checkbox(
         label='Task done',
         key=f"check_{index}",
@@ -103,15 +104,15 @@ if "edit_index" in st.session_state:
         key="edit_input"
     )
 
-    col1, col2 = st.columns([1, 1])
+    col0, col1, col2, col3 = st.columns([1, 8, 1, 1])
 
-    with col1:
+    with col2:
         if st.button("Save"):
             idx = st.session_state.get("edit_index")
             if idx is not None:
                 edit_task(idx, new_text)
 
-    with col2:
+    with col3:
         if st.button("Cancel"):
             st.session_state.pop("edit_index", None)
             st.session_state.pop("edit_text", None)
