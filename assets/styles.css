@@ -23,7 +23,7 @@ h1, h2, h3, h4 { color: #DFFF00 !important; }
     background: #ccff00;
     color: #000 !important;
     padding: 10px 18px;
-    font-size: 12px;
+    font-size: 16px;
     border-radius: 8px;
     font-weight: 600;
     text-decoration: none;
@@ -37,24 +37,41 @@ h1, h2, h3, h4 { color: #DFFF00 !important; }
 }
 
 /* EXPANDER */
-.streamlit-expanderHeader p {
+div[data-testid="stExpander"] > details > summary p {
+    background-color: #000000 !important;
     color: #DFFF00 !important;
     font-size: 20px !important;
-    font-weight: 600 !important;
+    font-weight: 400 !important;
 }
 .streamlit-expanderHeader:hover {
     background-color: rgba(223, 255, 0, 0.15) !important;
+    color: #DFFF00 !important;
 }
-.streamlit-expander {
-    border: 1px solid rgba(223,255,0,0.25) !important;
+div[data-testid="stExpander"] > details > summary:hover p {
+    color: #DFFF00 !important;
+}
+div[data-testid="stExpander"] > details {
+    border: 1px solid white !important;
     border-radius: 10px !important;
-    margin-bottom: 12px !important;
+}
+
+/* EXPANDER ARROW COLOR (LIME) */
+details.streamlit-expander summary svg path {
+    stroke: white !important;
+}
+
+details.streamlit-expander:not([open]):hover summary svg path {
+    stroke: lime !important;
+}
+
+details.streamlit-expander[open] summary svg path {
+    stroke: white !important;
 }
 
 /* BUTTONS */
 div.stButton > button {
     background-color: #DFFF00;
-    font-size: 12px !important;
+    font-size: 16px !important;
     font-weight: 600;
     color: black;
     border-radius: 8px;
@@ -65,6 +82,7 @@ div.stButton > button {
 }
 div.stButton > button:hover {
     background-color: #C8FF00;
+    color: black;
     transform: translateY(-2px);
     box-shadow: 0px 0px 12px #DFFF00;
 }
@@ -76,7 +94,7 @@ div.stButton > button:hover {
     border-radius: 8px !important;
     border: 1px solid #2A2D35 !important;
     height: 40px !important;
-    font-size: 12px !important;
+    font-size: 16px !important;
     padding: 8px 12px !important;
 }
 .stTextInput label { color: #FFFFFF !important; }
@@ -92,7 +110,7 @@ div.stButton > button:hover {
     backdrop-filter: blur(8px);
     display: flex;
     align-items: center;
-    font-size: 12px;
+    font-size: 16px;
     color: white !important;
     margin-bottom: 8px;
 }

@@ -102,7 +102,7 @@ with st.expander("Pending", expanded=True):
                     "Update Task:",
                     key="edit_text",
                     value=st.session_state.edit_text,
-                    label_visibility="visible"
+                    label_visibility="collapsed"
                 )
 
             with edit_cols[1]:
@@ -227,11 +227,64 @@ with st.expander("In Progress", expanded=False):
 
 with st.expander("Completed", expanded=False):
     for index, task in completed_tasks:
-        st.markdown(
-            f"""
-                <div class="glass-task">
-                {task['task']}
-                </div>
-            """,
-            unsafe_allow_html=True)
 
+        # ----------------------------
+        # 1) If task is being edited
+        # ----------------------------
+
+        if st.session_state.get("edit_index") == index:
+            edit_cols = st.columns([10, 0.8, 1, 1.2])
+
+            with edit_cols[0]:
+                st.text_input(
+                    "Update Task:",
+                    key="edit_text",
+                    value=st.session_state.edit_text,
+                    label_visibility="collapsed"
+                )
+
+            with edit_cols[1]:
+                if st.button("Save", key=f"save_ip_{index}"):
+                    edit_task(index, st.session_state.edit_text)
+                    st.session_state.pop("edit_index")
+                    st.session_state.pop("edit_text")
+                    st.rerun()
+
+            with edit_cols[2]:
+                if st.button("Cancel", key=f"cancel_ip_{index}"):
+                    st.session_state.pop("edit_index")
+                    st.session_state.pop("edit_text")
+                    st.rerun()
+
+            continue
+
+        # ----------------------------
+        # 2) If task is not being edited
+        # ----------------------------
+
+        row = st.columns([10, 0.8, 1, 1.2])
+
+        with row[0]:
+            st.markdown(
+                f"""
+                    <div class="glass-task">
+                    {task['task']}
+                    </div>
+                """,
+                unsafe_allow_html=True)
+
+        with row[1]:
+            if st.button("Edit", key=f"ip_edit_{index}"):
+                st.session_state.edit_index = index
+                st.session_state.edit_text = task["task"]
+                st.rerun()
+
+        with row[2]:
+            if st.button("Delete", key=f"ip_delete_{index}"):
+                delete_task(index)
+                st.rerun()
+
+        with row[3]:
+            if st.button("Reopen", key=f"c_reopen_{index}"):
+                update_status(index, "pending")
+                st.rerun()
