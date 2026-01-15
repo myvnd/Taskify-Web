@@ -9,7 +9,7 @@ import streamlit as st
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from core import functions
-from core.app import add_task, edit_task, delete_task, reset_new_task, update_status, load_css
+from core.app import add_task, edit_task, delete_task, update_status, load_css
 
 
 # ==================================================================
