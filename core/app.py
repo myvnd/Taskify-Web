@@ -62,17 +62,14 @@ def update_status(index, new_status):
 
 
 # ============================================================
-# COMPLETE TASK
-# ============================================================
-
-def complete_task(index):
-    functions.update_task_status(index, "completed")
-
-
-# ============================================================
 # LOAD CSS
 # ============================================================
 
 def load_css(filename):
     with open(filename) as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
+
+def reset_new_task():
+    if "new_task" in st.session_state:
+        st.session_state.new_task = ""

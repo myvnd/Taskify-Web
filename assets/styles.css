@@ -36,12 +36,6 @@ h1, h2, h3, h4 { color: #DFFF00 !important; }
     box-shadow: 0 0 12px rgba(204, 255, 0, 0.7);
 }
 
-/* SIDEBAR */
-section[data-testid="stSidebar"] {
-    background-color: #111418;
-    border-right: 1px solid rgba(255,255,255,0.1);
-}
-
 /* EXPANDER */
 .streamlit-expanderHeader p {
     color: #DFFF00 !important;

@@ -9,7 +9,7 @@ import streamlit as st
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from core import functions
-from core.app import add_task, edit_task, delete_task, complete_task, load_css
+from core.app import add_task, edit_task, delete_task, reset_new_task, update_status, load_css
 
 
 # ==================================================================
@@ -18,6 +18,11 @@ from core.app import add_task, edit_task, delete_task, complete_task, load_css
 
 st.set_page_config(page_title="Emma | Taskify", layout="wide")
 load_css("assets/styles.css")
+
+# Reset input box after adding a task
+if st.session_state.get("should_reset_task"):
+    st.session_state.new_task = ""
+    st.session_state.pop("should_reset_task")
 
 
 # ==================================================================
@@ -53,7 +58,7 @@ with col_btn:
 
         if new_task:
             add_task()
-            st.session_state["new_task"] = ""
+            st.session_state["should_reset_task"] = True
             st.success(f"Task Added: {new_task}")
             st.rerun()
         else:
@@ -90,7 +95,7 @@ with st.expander("Pending", expanded=True):
         # ----------------------------
 
         if st.session_state.get("edit_index") == index:
-            edit_cols = st.columns([16.2, 0.8, 1])
+            edit_cols = st.columns([10, 0.8, 1, 1.2])
 
             with edit_cols[0]:
                 st.text_input(
@@ -119,7 +124,7 @@ with st.expander("Pending", expanded=True):
         # 2) If task is not being edited
         # ----------------------------
 
-        row = st.columns([16.2, 0.8, 1])
+        row = st.columns([10, 0.8, 1, 1.2])
 
         with row[0]:
             st.markdown(
@@ -131,14 +136,19 @@ with st.expander("Pending", expanded=True):
                 unsafe_allow_html=True)
 
         with row[1]:
-            if st.button("Edit", key=f"pending_edit_{index}"):
+            if st.button("Edit", key=f"p_edit_{index}"):
                 st.session_state.edit_index = index
                 st.session_state.edit_text = task["task"]
                 st.rerun()
 
         with row[2]:
-            if st.button("Delete", key=f"pending_delete_{index}"):
+            if st.button("Delete", key=f"p_delete_{index}"):
                 delete_task(index)
+                st.rerun()
+
+        with row[3]:
+            if st.button("In Progress", key=f"p_in_progress_{index}"):
+                update_status(index, "in_progress")
                 st.rerun()
 
 
@@ -154,7 +164,7 @@ with st.expander("In Progress", expanded=False):
         # ----------------------------
 
         if st.session_state.get("edit_index") == index:
-            edit_cols = st.columns([14, 0.8, 1, 1.2])
+            edit_cols = st.columns([10, 0.8, 1, 1.2])
 
             with edit_cols[0]:
                 st.text_input(
@@ -183,7 +193,7 @@ with st.expander("In Progress", expanded=False):
         # 2) If task is not being edited
         # ----------------------------
 
-        row = st.columns([14, 0.8, 1, 1.2])
+        row = st.columns([10, 0.8, 1, 1.2])
 
         with row[0]:
             st.markdown(
@@ -195,19 +205,19 @@ with st.expander("In Progress", expanded=False):
                 unsafe_allow_html=True)
 
         with row[1]:
-            if st.button("Edit", key=f"in_progress_edit_{index}"):
+            if st.button("Edit", key=f"ip_edit_{index}"):
                 st.session_state.edit_index = index
                 st.session_state.edit_text = task["task"]
                 st.rerun()
 
         with row[2]:
-            if st.button("Delete", key=f"in_progress_delete_{index}"):
+            if st.button("Delete", key=f"ip_delete_{index}"):
                 delete_task(index)
                 st.rerun()
 
         with row[3]:
-            if st.button("Complete", key=f"in_progress_complete_{index}"):
-                complete_task(index)
+            if st.button("Complete", key=f"ip_complete_{index}"):
+                update_status(index, "completed")
                 st.rerun()
 
 
