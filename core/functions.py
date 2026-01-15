@@ -1,4 +1,5 @@
 import os
+import json
 import tempfile
 import shutil
 
@@ -26,7 +27,7 @@ os.makedirs(DATA_DIR, exist_ok=True)
 # 3. FILE LƯU DANH SÁCH TASK
 # ============================================================
 
-TASK_FILE = os.path.join(DATA_DIR, "task-list.txt")
+TASK_FILE = os.path.join(DATA_DIR, "task-list.json")
 
 
 # ============================================================
@@ -38,17 +39,14 @@ TASK_FILE = os.path.join(DATA_DIR, "task-list.txt")
 
 def get_task_list():
     """
-    Read task list from data/task-list.txt.
-    Returns a Python list of task strings.
+    Read task list from data/task-list.json (list of dict objects).
     """
     if not os.path.exists(TASK_FILE):
         return []
 
     try:
         with open(TASK_FILE, "r", encoding="utf-8") as f:
-            lines = f.readlines()
-            # Strip newline của mỗi task
-            return [line.strip() for line in lines]
+            return json.load(f)
     except Exception as e:
         print(f"[ERROR] Cannot read task list: {e}")
         return []
@@ -63,13 +61,12 @@ def get_task_list():
 
 def write_task_list(task_list):
     """
-    Write list of tasks (list of strings) to task-list.txt.
-    Uses atomic write for safety.
+    Write list of dict tasks to task-list.json using atomic write.
     """
     try:
         # Ghi vào file tạm
         with tempfile.NamedTemporaryFile("w", delete=False, encoding="utf-8") as tmp:
-            tmp.writelines(task + "\n" for task in task_list)
+            json.dump(task_list, tmp, indent=4, ensure_ascii=False)
             temp_name = tmp.name
 
         # Replace file cũ

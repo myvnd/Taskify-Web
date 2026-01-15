@@ -2,122 +2,226 @@ import sys
 import os
 import streamlit as st
 
-# Add project root to Python path
+
+# ==================================================================
+# 1. PROJECT ROOT
+# ==================================================================
+
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from core import functions
-
-st.set_page_config(layout="wide")
-
-st.title('Taskify')
-
-def add_task():
-    """ Add a new task """
-    new_task = st.session_state['new_task'].strip()
-    if not new_task:
-        return
-
-    task_list = functions.get_task_list() # Read current list
-    task_list.append(new_task) # Add new task
-    functions.write_task_list(task_list) # Save back to file
-
-    st.session_state.new_task = '' # Clear input box
+from core.app import add_task, edit_task, delete_task, complete_task, load_css
 
 
-def edit_task(index, new_text):
-    """ Edit a task """
-    task_list = functions.get_task_list()
-    if 0 <= index < len(task_list):
-        task_list[index] = new_text.strip()
-        functions.write_task_list(task_list)
-    st.rerun()
+# ==================================================================
+# 2. PAGE CONFIGURATION
+# ==================================================================
+
+st.set_page_config(page_title="Emma | Taskify", layout="wide")
+load_css("assets/styles.css")
 
 
-def delete_task(index):
-    """ Delete a task """
-    task_list = functions.get_task_list()
-    if 0 <= index < len(task_list):
-        task_list.pop(index)
-        functions.write_task_list(task_list)
+# ==================================================================
+# 3. HEADER
+# ==================================================================
 
-    # If current edit target was deleted
-    if st.session_state.get("edit_index") == index:
-        st.session_state.pop("edit_index", None)
-        st.session_state.pop("edit_text", None)
-
-    # If the deletion shifts indexes AFTER the edit index
-    elif st.session_state.get("edit_index", -1) > index:
-        st.session_state["edit_index"] -= 1
-
-    st.rerun()
+st.title("Taskify")
+st.write("Forge your synergistic intelligence by staying organized.")
 
 
-# Load task list
-task_list = functions.get_task_list()
+# ==================================================================
+# 4. ADD TASK INPUT
+# ==================================================================
 
+col_input, col_btn = st.columns([4, 1])
 
-# ==== INPUT BOX ====
-
-st.text_input(
-    label='Enter a new task here:',
-    placeholder='Enter text',
-    key='new_task',
-    on_change=add_task,
-    label_visibility='visible'
+with col_input:
+    new_task = st.text_input(
+        label="Type your task here:",
+        placeholder="e.g., Research AI Ethics",
+        key='new_task',
+        label_visibility='visible',
+        disabled=("edit_index" in st.session_state)
 )
 
+with col_btn:
+    st.write("###")
 
-st.write("### My Tasks")
+    if st.button("Add Task",
+                 key='btn_add_task',
+                 disabled=("edit_index" in st.session_state)):
+        new_task = st.session_state.get("new_task", "").strip()
 
-for index, task in enumerate(task_list):
-    cols = st.columns([1, 8, 1, 1])
-    checked = cols[0].checkbox(
-        label='Task done',
-        key=f"check_{index}",
-        label_visibility="hidden"
-        )
-
-    cols[1].write(task) # Show task name
-
-    # Edit button
-    if cols[2].button("Edit", key=f"edit_{index}"):
-        st.session_state.edit_index = index
-        st.session_state.edit_text = task
-
-    # Delete button
-    if cols[3].button("Delete", key=f"delete_{index}"):
-        delete_task(index)
-
-    # If checkbox is checked and user presses Enter in the global input
-    if checked and st.session_state.get('new_task_triggered', False):
-        edit_task(index, st.session_state['new_task'])
-
-
-# ==== EDIT MODE UI ====
-
-if "edit_index" in st.session_state:
-
-    st.write("### Edit task")
-
-    new_text = st.text_input(
-        "Edit task here:",
-        value=st.session_state.get("edit_text", ""),
-        key="edit_input"
-    )
-
-    col0, col1, col2, col3 = st.columns([1, 8, 1, 1])
-
-    with col2:
-        if st.button("Save"):
-            idx = st.session_state.get("edit_index")
-            if idx is not None:
-                edit_task(idx, new_text)
-
-    with col3:
-        if st.button("Cancel"):
-            st.session_state.pop("edit_index", None)
-            st.session_state.pop("edit_text", None)
+        if new_task:
+            add_task()
+            st.session_state["new_task"] = ""
+            st.success(f"Task Added: {new_task}")
             st.rerun()
+        else:
+            st.warning("Please enter a valid task!")
 
 
-# Reset trigger after processing update logic
-st.session_state.new_task_triggered = False
+# ==================================================================
+# 5. DISPLAY TASKS
+# ==================================================================
+
+st.markdown("### My Tasks")
+
+# Render tasks
+task_list = functions.get_task_list()
+
+pending_tasks = [(i, t) for i, t in enumerate(task_list)
+                 if t["status"] == "pending"]
+in_progress_tasks = [(i, t) for i, t in enumerate(task_list)
+                     if t["status"] == "in_progress"]
+completed_tasks = [(i, t) for i, t in enumerate(task_list)
+                   if t["status"] == "completed"]
+
+
+# ==================================================================
+# PENDING TASKS
+# ==================================================================
+
+with st.expander("Pending", expanded=True):
+
+    for index, task in pending_tasks:
+
+        # ----------------------------
+        # 1) If task is being edited
+        # ----------------------------
+
+        if st.session_state.get("edit_index") == index:
+            edit_cols = st.columns([16.2, 0.8, 1])
+
+            with edit_cols[0]:
+                st.text_input(
+                    "Update Task:",
+                    key="edit_text",
+                    value=st.session_state.edit_text,
+                    label_visibility="visible"
+                )
+
+            with edit_cols[1]:
+                if st.button("Save", key=f"save_{index}"):
+                    edit_task(index, st.session_state.edit_text)
+                    st.session_state.pop("edit_index")
+                    st.session_state.pop("edit_text")
+                    st.rerun()
+
+            with edit_cols[2]:
+                if st.button("Cancel", key=f"cancel_{index}"):
+                    st.session_state.pop("edit_index")
+                    st.session_state.pop("edit_text")
+                    st.rerun()
+
+            continue
+
+        # ----------------------------
+        # 2) If task is not being edited
+        # ----------------------------
+
+        row = st.columns([16.2, 0.8, 1])
+
+        with row[0]:
+            st.markdown(
+                f"""
+                    <div class="glass-task">
+                    {task['task']}
+                    </div>
+                """,
+                unsafe_allow_html=True)
+
+        with row[1]:
+            if st.button("Edit", key=f"pending_edit_{index}"):
+                st.session_state.edit_index = index
+                st.session_state.edit_text = task["task"]
+                st.rerun()
+
+        with row[2]:
+            if st.button("Delete", key=f"pending_delete_{index}"):
+                delete_task(index)
+                st.rerun()
+
+
+# ==================================================================
+# IN PROGRESS TASKS
+# ==================================================================
+
+with st.expander("In Progress", expanded=False):
+    for index, task in in_progress_tasks:
+
+        # ----------------------------
+        # 1) If task is being edited
+        # ----------------------------
+
+        if st.session_state.get("edit_index") == index:
+            edit_cols = st.columns([14, 0.8, 1, 1.2])
+
+            with edit_cols[0]:
+                st.text_input(
+                    "Update Task:",
+                    key="edit_text",
+                    value=st.session_state.edit_text,
+                    label_visibility="collapsed"
+                )
+
+            with edit_cols[1]:
+                if st.button("Save", key=f"save_ip_{index}"):
+                    edit_task(index, st.session_state.edit_text)
+                    st.session_state.pop("edit_index")
+                    st.session_state.pop("edit_text")
+                    st.rerun()
+
+            with edit_cols[2]:
+                if st.button("Cancel", key=f"cancel_ip_{index}"):
+                    st.session_state.pop("edit_index")
+                    st.session_state.pop("edit_text")
+                    st.rerun()
+
+            continue
+
+        # ----------------------------
+        # 2) If task is not being edited
+        # ----------------------------
+
+        row = st.columns([14, 0.8, 1, 1.2])
+
+        with row[0]:
+            st.markdown(
+                f"""
+                    <div class="glass-task">
+                    {task['task']}
+                    </div>
+                """,
+                unsafe_allow_html=True)
+
+        with row[1]:
+            if st.button("Edit", key=f"in_progress_edit_{index}"):
+                st.session_state.edit_index = index
+                st.session_state.edit_text = task["task"]
+                st.rerun()
+
+        with row[2]:
+            if st.button("Delete", key=f"in_progress_delete_{index}"):
+                delete_task(index)
+                st.rerun()
+
+        with row[3]:
+            if st.button("Complete", key=f"in_progress_complete_{index}"):
+                complete_task(index)
+                st.rerun()
+
+
+# ==================================================================
+# COMPLETED TASKS
+# ==================================================================
+
+with st.expander("Completed", expanded=False):
+    for index, task in completed_tasks:
+        st.markdown(
+            f"""
+                <div class="glass-task">
+                {task['task']}
+                </div>
+            """,
+            unsafe_allow_html=True)
+
