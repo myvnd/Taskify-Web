@@ -9,7 +9,7 @@ import streamlit as st
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from core import functions
-from core.app import add_task, edit_task, delete_task, update_status, load_css
+from core.app import add_task, edit_task, delete_task, update_status, load_css, start_edit
 
 
 # ==================================================================
@@ -138,7 +138,11 @@ with st.expander("Pending", expanded=True):
                 unsafe_allow_html=True)
 
         with row[1]:
-            if st.button("Edit", key=f"p_edit_{index}"):
+            if st.button("Edit",
+                         key=f"p_edit_{index}",
+                         on_click=start_edit,
+                         args=(index, task['task'])
+                         ):
                 st.session_state.edit_index = index
                 st.session_state.edit_text = task["task"]
                 st.rerun()
@@ -206,7 +210,11 @@ with st.expander("In Progress", expanded=False):
                 unsafe_allow_html=True)
 
         with row[1]:
-            if st.button("Edit", key=f"ip_edit_{index}"):
+            if st.button("Edit",
+                         key=f"ip_edit_{index}",
+                         on_click=start_edit,
+                         args=(index, task['task'])
+                         ):
                 st.session_state.edit_index = index
                 st.session_state.edit_text = task["task"]
                 st.rerun()
@@ -274,7 +282,11 @@ with st.expander("Completed", expanded=False):
                 unsafe_allow_html=True)
 
         with row[1]:
-            if st.button("Edit", key=f"ip_edit_{index}"):
+            if st.button("Edit",
+                         key=f"ip_edit_{index}",
+                         on_click=start_edit,
+                         args=(index, task["task"]),
+                         ):
                 st.session_state.edit_index = index
                 st.session_state.edit_text = task["task"]
                 st.rerun()
