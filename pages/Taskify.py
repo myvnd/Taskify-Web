@@ -16,7 +16,11 @@ from core.app import add_task, edit_task, delete_task, update_status, load_css
 # 2. PAGE CONFIGURATION
 # ==================================================================
 
-st.set_page_config(page_title="Emma | Taskify", layout="wide")
+st.set_page_config(
+    page_title="Emma | Taskify",
+    layout="wide",
+    initial_sidebar_state="collapsed"
+)
 load_css("assets/styles.css")
 
 # Reset input box after adding a task
@@ -37,20 +41,18 @@ st.write("Forge your synergistic intelligence by staying organized.")
 # 4. ADD TASK INPUT
 # ==================================================================
 
-col_input, col_btn = st.columns([4, 1])
+cols = st.columns([10, 3])
 
-with col_input:
+with cols[0]:
     new_task = st.text_input(
         label="Type your task here:",
         placeholder="e.g., Research AI Ethics",
         key='new_task',
-        label_visibility='visible',
+        label_visibility='collapsed',
         disabled=("edit_index" in st.session_state)
-)
+    )
 
-with col_btn:
-    st.write("###")
-
+with cols[1]:
     if st.button("Add Task",
                  key='btn_add_task',
                  disabled=("edit_index" in st.session_state)):
