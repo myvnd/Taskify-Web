@@ -103,7 +103,7 @@ with st.expander("Pending", expanded=True):
                 st.text_input(
                     "Update Task:",
                     key="edit_text",
-                    value=st.session_state.edit_text,
+                    # value=st.session_state.edit_text,
                     label_visibility="collapsed"
                 )
 
@@ -172,7 +172,6 @@ with st.expander("In Progress", expanded=False):
                 st.text_input(
                     "Update Task:",
                     key="edit_text",
-                    value=st.session_state.edit_text,
                     label_visibility="collapsed"
                 )
 
@@ -241,7 +240,6 @@ with st.expander("Completed", expanded=False):
                 st.text_input(
                     "Update Task:",
                     key="edit_text",
-                    value=st.session_state.edit_text,
                     label_visibility="collapsed"
                 )
 
