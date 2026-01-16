@@ -69,6 +69,7 @@ def load_css(filename):
     with open(filename) as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
+
 def start_edit(index, text):
     st.session_state.edit_index = index
     st.session_state.edit_text = text
