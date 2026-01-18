@@ -1,13 +1,16 @@
 /* ==================================================================
    CUSTOM CSS
-================================================================== */
+   ================================================================== */
 
 /* GLOBAL */
+/* Selector của toàn bộ ứng dụng Streamlit. */
 .stApp {
-    background-color: #0E1117;
-    color: white;
-    font-family: 'Inter', sans-serif;
+    background-color: #0E1117; /* Đổi màu nền của app thành xanh đen. */
+    color: white; /* Set màu chữ mặc định là trắng. */
+    font-family: 'Inter', 'Satoshi'; /* Dùng font Inter cho toàn app. */
 }
+
+/* Mọi tiêu đề (H1 - H4) chuyển sang màu lime (#DFFF00). */
 h1, h2, h3, h4 { color: #DFFF00 !important; }
 
 /* TOP MENU */
@@ -115,13 +118,191 @@ div.stButton > button:hover {
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid rgba(255,255,255,0.15);
     border-radius: 8px;
-    height: 40px;
     padding: 8px 12px;
     backdrop-filter: blur(8px);
     display: flex;
     align-items: center;
     font-size: 14px;
     color: white !important;
-    margin-bottom: 8px;
+    margin-bottom: 16px;
 }
 
+
+/* --------------------------------------------------
+   Material 3 - Global Tokens
+-------------------------------------------------- */
+:root {
+  /* Colors */
+  --md3-primary: #6750A4;
+  --md3-on-primary: #FFFFFF;
+  --md3-primary-container: #EADDFF;
+  --md3-on-primary-container: #21005D;
+
+  --md3-surface: #FFFFFF;
+  --md3-on-surface: #1D1B20;
+
+  --md3-outline: #79747E;
+
+  /* Elevation */
+  --elevation-0: 0px 0px 0px rgba(0,0,0,0.0);
+  --elevation-1: 0px 1px 3px rgba(0,0,0,0.12);
+
+  /* Radius */
+  --radius-round: 100px;
+  --radius-square: 4px;
+
+  /* Sizes (padding, icon-size, min-height) */
+  --btn-height-xsmall: 24px;
+  --btn-height-small: 32px;
+  --btn-height-medium: 40px;
+  --btn-height-large: 48px;
+  --btn-height-xlarge: 56px;
+
+  --btn-padding-default: 0 16px;
+}
+
+/* --------------------------------------------------
+   BASE STRUCTURE (for all buttons)
+-------------------------------------------------- */
+.button,
+.toggle-button,
+.icon-button {
+  font-family: sans-serif;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  transition: 0.2s ease;
+}
+
+/* ---------- Type Variant ---------- */
+.button.round,
+.toggle-button.round,
+.icon-button.round {
+  border-radius: var(--radius-round);
+}
+
+.button.square,
+.toggle-button.square,
+.icon-button.square {
+  border-radius: var(--radius-square);
+}
+
+/* ---------- Size Variant ---------- */
+.button.xsmall,
+.toggle-button.xsmall,
+.icon-button.xsmall { height: var(--btn-height-xsmall); padding: var(--btn-padding-default); }
+.button.small,
+.toggle-button.small,
+.icon-button.small { height: var(--btn-height-small); padding: var(--btn-padding-default); }
+.button.medium,
+.toggle-button.medium,
+.icon-button.medium { height: var(--btn-height-medium); padding: var(--btn-padding-default); }
+.button.large,
+.toggle-button.large,
+.icon-button.large { height: var(--btn-height-large); padding: var(--btn-padding-default); }
+.button.xlarge,
+.toggle-button.xlarge,
+.icon-button.xlarge { height: var(--btn-height-xlarge); padding: var(--btn-padding-default); }
+
+/* --------------------------------------------------
+   BUTTON (Filled, Tonal, Outline, Text, Elevated…)
+-------------------------------------------------- */
+
+/* Filled Button */
+.button.filled {
+  background: var(--md3-primary);
+  color: var(--md3-on-primary);
+  box-shadow: var(--elevation-0);
+}
+
+/* Tonal Button */
+.button.tonal {
+  background: var(--md3-primary-container);
+  color: var(--md3-on-primary-container);
+}
+
+/* Outline Button */
+.button.outline {
+  border: 1px solid var(--md3-outline);
+  color: var(--md3-on-surface);
+  background: transparent;
+}
+
+/* Text Button */
+.button.text {
+  background: transparent;
+  color: var(--md3-primary);
+}
+
+/* Elevated Button */
+.button.elevated {
+  background: var(--md3-surface);
+  color: var(--md3-primary);
+  box-shadow: var(--elevation-1);
+}
+
+/* --------------------------------------------------
+   BUTTON STATES (enabled, hovered, pressed, disabled)
+-------------------------------------------------- */
+.button.enabled:hover,
+.toggle-button.enabled:hover,
+.icon-button.enabled:hover {
+  filter: brightness(0.95);
+}
+
+.button.enabled:active,
+.toggle-button.enabled:active,
+.icon-button.enabled:active {
+  filter: brightness(0.9);
+}
+
+.button.disabled,
+.toggle-button.disabled,
+.icon-button.disabled {
+  opacity: 0.38;
+  pointer-events: none;
+}
+
+.button.focused,
+.toggle-button.focused,
+.icon-button.focused {
+  outline: 2px solid var(--md3-primary);
+}
+
+/* --------------------------------------------------
+   TOGGLE BUTTON
+   Includes selected/unselected state
+-------------------------------------------------- */
+.toggle-button {
+  border: 1px solid var(--md3-outline);
+  background: var(--md3-surface);
+  color: var(--md3-on-surface);
+}
+
+.toggle-button.selected-true {
+  background: var(--md3-primary);
+  color: var(--md3-on-primary);
+  border-color: var(--md3-primary);
+}
+
+.toggle-button.selected-false {
+  background: var(--md3-surface);
+  color: var(--md3-on-surface);
+}
+
+/* --------------------------------------------------
+   ICON BUTTON
+   width: narrow, default, wide
+-------------------------------------------------- */
+.icon-button { padding: 0; }
+
+/* width variants */
+.icon-button.narrow { width: 32px; }
+.icon-button.default { width: 40px; }
+.icon-button.wide    { width: 48px; }
+
+/* states handled above */
+/* You can add icon-specific elevation if needed */
